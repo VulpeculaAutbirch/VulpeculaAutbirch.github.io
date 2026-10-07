@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OCR Pseudocode Runner</title>
+<meta name="description" content="在浏览器里运行 OCR A Level Computer Science (H046/H446) 标准伪代码">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <div class="brand">
+      <h1>OCR Pseudocode Runner</h1>
+      <span class="spec">H046 / H446</span>
+    </div>
+    <div class="controls">
+      <select id="examples" class="btn" aria-label="示例程序">
+        <option value="">示例程序…</option>
+      </select>
+      <button id="run" class="btn primary" type="button">▶ 运行<span class="key">Ctrl+Enter</span></button>
+      <button id="stop" class="btn" type="button" disabled>■ 停止</button>
+      <span id="status" class="status" data-state="idle">就绪</span>
+    </div>
+  </header>
+
+  <main class="work">
+    <section class="pane" aria-label="代码编辑器">
+      <div class="pane-head">
+        <span class="pane-title">program.txt</span>
+        <span class="spacer"></span>
+        <button id="copy" class="link-btn" type="button">复制代码</button>
+        <button id="share" class="link-btn" type="button">分享链接</button>
+        <button id="clear-code" class="link-btn" type="button">清空</button>
+      </div>
+      <div class="editor">
+        <div id="gutter" class="gutter" aria-hidden="true"></div>
+        <div class="code">
+          <pre id="highlight" aria-hidden="true"></pre>
+          <textarea id="source" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="伪代码"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="pane side" aria-label="输出">
+      <div class="pane-head" role="tablist">
+        <button class="tab" role="tab" id="tab-console" aria-selected="true" aria-controls="view-console">输出</button>
+        <button class="tab" role="tab" id="tab-files" aria-selected="false" aria-controls="view-files">文件</button>
+        <button class="tab" role="tab" id="tab-ref" aria-selected="false" aria-controls="view-ref">语法速查</button>
+        <span class="spacer"></span>
+        <button id="clear-console" class="link-btn" type="button">清屏</button>
+      </div>
+
+      <div id="view-console" class="view" role="tabpanel">
+        <div id="console" class="console" aria-live="polite"><span class="placeholder">按 ▶ 运行（或 Ctrl+Enter）。print() 的输出会显示在这里；遇到 input() 时直接在这里输入并按回车。</span></div>
+      </div>
+
+      <div id="view-files" class="view" role="tabpanel" hidden>
+        <div class="files">
+          <div class="file-tools">
+            <input id="new-file-name" type="text" placeholder="sample.txt" aria-label="新文件名">
+            <button id="new-file" class="btn" type="button">新建文件</button>
+            <button id="delete-file" class="btn" type="button" disabled>删除</button>
+            <span class="hint">openRead / openWrite 读写这里的文件（保存在浏览器中）</span>
+          </div>
+          <div id="file-list" class="file-list"></div>
+          <textarea id="file-content" spellcheck="false" aria-label="文件内容" disabled placeholder="选择或新建一个文件"></textarea>
+        </div>
+      </div>
+
+      <div id="view-ref" class="view ref" role="tabpanel" hidden>
+        <h2>变量与类型转换</h2>
+<pre>x = 3
+name = "Bob"
+global userid = 123        // 全局变量
+str(3)  int("3")  float("3.14")  real("2.5")  bool("true")</pre>
+        <h2>输入输出</h2>
+<pre>print("hello")
+name = input("Please enter your name")</pre>
+        <h2>循环</h2>
+<pre>for i=0 to 7               // 0 到 7（含），共 8 次
+    print("Hello")
+next i
+
+for i = 10 to 0 step -2    // 可选 step
+next i
+
+while answer != "computer"
+    answer = input("Password?")
+endwhile
+
+do
+    answer = input("Password?")
+until answer == "computer"</pre>
+        <h2>运算符</h2>
+        <div class="table-wrap"><table>
+          <tr><th>比较</th><td><code>== != &lt; &lt;= &gt; &gt;=</code></td></tr>
+          <tr><th>算术</th><td><code>+ - * /</code>　<code>MOD</code> 取余　<code>DIV</code> 整除　<code>^</code> 乘方</td></tr>
+          <tr><th>逻辑</th><td><code>AND OR NOT</code></td></tr>
+        </table></div>
+        <h2>选择</h2>
+<pre>if entry == "a" then
+    print("A")
+elseif entry == "b" then
+    print("B")
+else
+    print("?")
+endif
+
+switch entry:
+    case "A":
+        print("You selected A")
+    default:
+        print("Unrecognised")
+endswitch</pre>
+        <h2>字符串</h2>
+<pre>s = "Computer Science"
+s.length               // 16
+s.substring(3, 3)      // "put"，从第 0 个字符开始
+s.upper   s.lower   s.left(3)   s.right(3)
+ASC("A")  CHR(65)</pre>
+        <h2>子程序</h2>
+<pre>function triple(number)
+    return number*3
+endfunction
+
+procedure greeting(name)
+    print("hello" + name)
+endprocedure
+
+procedure foobar(x:byVal, y:byRef)   // 默认按值传递
+endprocedure</pre>
+        <h2>数组（下标从 0 开始）</h2>
+<pre>array names[5]
+names[0] = "Ahmad"
+array board[8,8]
+board[0,0] = "rook"
+array nums = [3, 1, 2]    // 带初始值
+names.length</pre>
+        <h2>文件</h2>
+<pre>myFile = openRead("sample.txt")
+while NOT myFile.endOfFile()
+    print(myFile.readLine())
+endwhile
+myFile.close()
+
+myFile = openWrite("sample.txt")
+myFile.writeLine("Hello World")
+myFile.close()</pre>
+        <h2>面向对象</h2>
+<pre>class Pet
+    private name
+    public procedure new(givenName)    // 构造函数
+        name = givenName
+    endprocedure
+endclass
+
+class Dog inherits Pet
+    private breed
+    public procedure new(givenName, givenBreed)
+        super.new(givenName)
+        breed = givenBreed
+    endprocedure
+endclass
+
+myDog = new Dog("Fido", "Scottish Terrier")</pre>
+        <h2>其他</h2>
+        <p>注释用 <code>//</code>。关键字不区分大小写（<code>IF</code>、<code>Endif</code> 都可以），变量名区分大小写。从 PDF 复制的弯引号 “ ” 会自动识别。也接受 <code>end if</code>、<code>else if</code>、<code>endfor</code>。额外提供 <code>random(1,6)</code>、<code>len()</code>、<code>round()</code>。</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="js/interpreter.js"></script>
+<script src="js/examples.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

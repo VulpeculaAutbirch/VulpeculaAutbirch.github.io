@@ -1,0 +1,11 @@
+{
+  "name": "ocr-pseudocode-runner",
+  "version": "1.0.0",
+  "description": "Run OCR A Level Computer Science (H046/H446) pseudocode in the browser or with Node.js",
+  "private": true,
+  "bin": { "ocr-pseudo": "cli/ocr.js" },
+  "scripts": {
+    "test": "node tests/run-tests.js"
+  },
+  "license": "MIT"
+}
